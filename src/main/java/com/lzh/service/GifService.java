@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
 import java.io.FileWriter;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -33,27 +34,34 @@ public class GifService {
     private String tempPath;
 
     public String renderGif(Subtitles subtitles) throws Exception {
-        String assPath = renderAss(subtitles);
-        String gifPath = Paths.get(tempPath).resolve(UUID.randomUUID() + ".gif").toString();
-        String videoPath = Paths.get(tempPath).resolve(subtitles.getTemplateName()+"/template.mp4").toString();
-        String cmd = String.format("ffmpeg -i %s -r 6 -vf ass=%s,scale=300:-1 -y %s", videoPath, assPath, gifPath);
+        File dir = new File(tempPath);
+        
+        String assRelativePath = UUID.randomUUID().toString().replace("-", "") + ".ass";
+        
+        renderAss(subtitles,assRelativePath);
+        
+        String gifRelativePath = UUID.randomUUID() + ".gif";
+        
+        String videoRelativePath = subtitles.getTemplateName()+File.separator+"template.mp4";
+        
+        String cmd = String.format("ffmpeg -i %s -r 6 -vf ass=%s,scale=300:-1 -y %s", videoRelativePath, assRelativePath, gifRelativePath);
         if ("simple".equals(subtitles.getMode())) {
 //            cmd = String.format("ffmpeg -i %s -r 2 -vf ass=%s,scale=250:-1 -f gif - |gifsicle --optimize=3 --delay=20 > %s ", videoPath, assPath, gifPath);
-            cmd = String.format("ffmpeg -i %s -r 5 -vf ass=%s,scale=180:-1 -y %s ", videoPath, assPath, gifPath);
+            cmd = String.format("ffmpeg -i %s -r 5 -vf ass=%s,scale=180:-1 -y %s ", videoRelativePath, assRelativePath, gifRelativePath);
         }
         logger.info("cmd: {}", cmd);
         try {
-            Process exec = Runtime.getRuntime().exec(cmd);
+            Process exec = Runtime.getRuntime().exec(cmd,null,dir);
             exec.waitFor();
 //            logger.info("输出:{}",IOUtils.toString(exec.getErrorStream()));
         } catch (Exception e) {
             logger.error("生成gif报错：{}", e);
         }
-        return gifPath;
+        return tempPath+gifRelativePath;
     }
 
-    private String renderAss(Subtitles subtitles) throws Exception {
-        Path path = Paths.get(tempPath).resolve(UUID.randomUUID().toString().replace("-", "") + ".ass");
+    private String renderAss(Subtitles subtitles,String assRelativePath) throws Exception {
+        Path path = Paths.get(tempPath).resolve(assRelativePath);
         Configuration cfg = new Configuration(Configuration.VERSION_2_3_27);
         cfg.setDefaultEncoding("UTF-8");
         cfg.setDirectoryForTemplateLoading(Paths.get(tempPath).resolve(subtitles.getTemplateName()).toFile());

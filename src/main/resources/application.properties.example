@@ -7,4 +7,4 @@ qcloud.accessKey=${KEY}
 qcloud.secretKey=${SECRET}
 qcloud.bucket=${BUCKET}
 qcloud.domainOfBucket=${BUCKET_DOMAIN}
-qcloud.enable=${QCLOUD_ENABLE:true}
+qcloud.enable=${QCLOUD_ENABLE:false}
