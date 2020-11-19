@@ -10,8 +10,7 @@ PlayResX: 288
 PlayResY: 160
 
 [Aegisub Project Garbage]
-Audio File: C:/Users/Administrator/Desktop/断水流_clip(1).mp4
-Video File: C:/Users/Administrator/Desktop/断水流_clip(1).mp4
+Audio File: G:/opt/site/cache/sorry/template.mp4
 Video AR Mode: 4
 Video AR Value: 1.800000
 Active Line: 6
@@ -23,12 +22,12 @@ Style: Default,Arial,20,&H00FFFFFF,&H000000FF,&H00000000,&H00000000,0,0,0,0,100,
 
 [Events]
 Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
-Dialogue: 0,0:00:00.08,0:00:03.80,Default,,0,0,0,,${mx.sentences0}
-Dialogue: 0,0:00:03.80,0:00:05.80,Default,,0,0,0,,${mx.sentences1}
-Dialogue: 0,0:00:05.80,0:00:07.80,Default,,0,0,0,,${mx.sentences2}
-Dialogue: 0,0:00:07.80,0:00:08.90,Default,,0,0,0,,${mx.sentences3}
-Dialogue: 0,0:00:08.90,0:00:09.50,Default,,0,0,0,,${mx.sentences4}
-Dialogue: 0,0:00:09.50,0:00:10.90,Default,,0,0,0,,${mx.sentences5}
-Dialogue: 0,0:00:10.90,0:00:13.30,Default,,0,0,0,,${mx.sentences6}
-Dialogue: 0,0:00:13.30,0:00:14.90,Default,,0,0,0,,${mx.sentences7}
-Dialogue: 0,0:00:14.90,0:00:16.90,Default,,0,0,0,,${mx.sentences8}
+Dialogue: 0,0:00:00.88,0:00:02.96,Default,,0,0,0,,${mx.sentences0}
+Dialogue: 0,0:00:02.96,0:00:05.06,Default,,0,0,0,,${mx.sentences1}
+Dialogue: 0,0:00:05.06,0:00:07.30,Default,,0,0,0,,${mx.sentences2}
+Dialogue: 0,0:00:07.30,0:00:09.90,Default,,0,0,0,,${mx.sentences3}
+Dialogue: 0,0:00:09.90,0:00:11.50,Default,,0,0,0,,${mx.sentences4}
+Dialogue: 0,0:00:11.50,0:00:13.00,Default,,0,0,0,,${mx.sentences5}
+Dialogue: 0,0:00:13.10,0:00:16.10,Default,,0,0,0,,${mx.sentences6}
+Dialogue: 0,0:00:17.50,0:00:19.50,Default,,0,0,0,,${mx.sentences7}
+Dialogue: 0,0:00:19.50,0:00:21.50,Default,,0,0,0,,${mx.sentences8}
