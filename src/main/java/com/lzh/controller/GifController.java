@@ -36,6 +36,7 @@ public class GifController {
     @ApiOperation(value = "获取gif", notes = "")
     @RequestMapping(path = "/gif/filePath", method = RequestMethod.POST)
     public Map renderGifPath(@RequestBody Subtitles subtitles){
+        System.out.println(subtitles);
         ConcurrentMap<String, String> map = Maps.newConcurrentMap();
         try{
             String file = gifService.renderGif(subtitles);

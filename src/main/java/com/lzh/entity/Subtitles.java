@@ -17,4 +17,10 @@ public class Subtitles {
     private String sentence;
 
     private String mode;
+    
+    @Override
+    public String toString() {
+        return "Subtitles [templateName=" + templateName + ", sentence=" + sentence + ", mode=" + mode + "]";
+    }
+    
 }
