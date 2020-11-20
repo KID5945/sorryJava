@@ -390,6 +390,14 @@
 //		e.relatedTarget // previous active tab
 		$('#template').val(e.target.id)
 	})
+	
+	function getContextPath(){     
+	    var pathName = document.location.pathname;     //当前文件的绝度路径
+	    var index = pathName.substr(1).indexOf("/");     
+	    var result = pathName.substr(0,index+1);     
+	    return result; 
+	}
+	
 	$('#render').bind('click', function () {
 		var $btn = $(this).button('loading')
 		$('#render').prop('disabled', true);
@@ -418,10 +426,10 @@
 			"sentence": all.join(),
 			"mode":$("input:checked").val()
 		}
-
+		var contextPath = getContextPath();
 		$.ajax({
 			type: "POST",
-			url: "/gif/filePath",
+			url: contextPath+"/gif/filePath",
 			data: JSON.stringify(json),
 			contentType: "application/json",
 			dataType: 'json'

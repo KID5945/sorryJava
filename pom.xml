@@ -6,7 +6,7 @@
 	<groupId>com.lzh</groupId>
 	<artifactId>sorry-java</artifactId>
 	<version>1.4.0</version>
-	<packaging>jar</packaging>
+	<packaging>war</packaging>
 
 	<name>sorryJava</name>
 	<description>sorry by java</description>
@@ -33,6 +33,12 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
+			<exclusions>
+	            <exclusion>
+	                <groupId>org.springframework.boot</groupId>
+	                <artifactId>spring-boot-starter-tomcat</artifactId>
+	            </exclusion>
+	        </exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -79,10 +85,30 @@
 			<artifactId>cos_api</artifactId>
 			<version>5.2.4</version>
 		</dependency>
+		
+		<!-- servlet 依赖 -->
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+		<!-- JSTL依赖 -->
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>jstl</artifactId>
+        </dependency>
+
+    	<dependency>
+            <groupId>org.apache.tomcat.embed</groupId>
+            <artifactId>tomcat-embed-jasper</artifactId>
+        </dependency>
+		
 	</dependencies>
 
 
 	<build>
+		<finalName>sorryJava</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
