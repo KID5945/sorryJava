@@ -1,24 +1,31 @@
 package com.lzh.service;
 
-import com.google.common.base.Splitter;
-import com.lzh.entity.Subtitles;
-import freemarker.template.Configuration;
-import freemarker.template.Template;
-import lombok.Getter;
-import lombok.Setter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.stereotype.Service;
-
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.stereotype.Service;
+
+import com.google.common.base.Splitter;
+import com.lzh.entity.Subtitles;
+
+import freemarker.template.Configuration;
+import freemarker.template.Template;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * Created by lizhihao on 2018/3/11.
@@ -52,12 +59,75 @@ public class GifService {
         logger.info("cmd: {}", cmd);
         try {
             Process exec = Runtime.getRuntime().exec(cmd,null,dir);
+            
+            handleProcess(exec);
+            //logger.info("输出正常:{}",IOUtils.toString(exec.getInputStream()));
+            //logger.info("输出错误:{}",IOUtils.toString(exec.getErrorStream()));
+            
             exec.waitFor();
-//            logger.info("输出:{}",IOUtils.toString(exec.getErrorStream()));
+            
         } catch (Exception e) {
             logger.error("生成gif报错：{}", e);
         }
         return tempPath+gifRelativePath;
+    }
+
+    private void handleProcess(Process process) {
+        new Thread() {
+            @Override
+            public void run() {
+                BufferedReader in = new BufferedReader(new InputStreamReader(process.getInputStream()));
+                String line = null;
+
+                try {
+                    while ((line = in.readLine()) != null) {
+                        logger.info("ffmpeg执行的结果为: "+line);
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } finally {
+                    try {
+                        in.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }.start();
+
+        new Thread(){
+            @Override
+            public void run()
+            {
+                BufferedReader err = new BufferedReader(new InputStreamReader(process.getErrorStream()));
+                String line = null;
+                StringBuilder result=new StringBuilder();
+                try
+                {
+                    while((line = err.readLine()) != null)
+                    {
+                        result.append(line);
+                    }
+                    logger.info("ffmpeg执行的错误: "+result);
+                }
+                catch (IOException e)
+                {
+                    e.printStackTrace();
+                }
+                finally
+                {
+                    try
+                    {
+                        err.close();
+                    }
+                    catch (IOException e)
+                    {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }.start();
+         
     }
 
     private String renderAss(Subtitles subtitles,String assRelativePath) throws Exception {
@@ -73,10 +143,23 @@ public class GifService {
         }
         root.put("mx", mx);
         Template temp = cfg.getTemplate("template.ftl");
-        try (FileWriter writer = new FileWriter(path.toFile())) {
+        BufferedWriter writer = null;
+        try{
+            writer = 
+                new BufferedWriter (
+                    new OutputStreamWriter (
+                        new FileOutputStream (path.toFile(),true),"UTF-8"));
             temp.process(root, writer);
         } catch (Exception e) {
             logger.error("生成ass文件报错", e);
+        }finally {
+            if(writer != null) {
+                try {
+                    writer.close();
+                } catch (Exception e) {   
+                     e.printStackTrace();
+                }
+            }
         }
         return path.toString();
     }
