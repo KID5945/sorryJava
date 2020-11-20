@@ -16,7 +16,7 @@ import java.util.UUID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.google.common.base.Splitter;
@@ -33,23 +33,29 @@ import lombok.Setter;
 @Service
 @Getter
 @Setter
-@ConfigurationProperties(prefix = "cache.template")
 public class GifService {
 
     private static final Logger logger = LoggerFactory.getLogger(GifService.class);
 
-    private String tempPath;
+    @Value("${sorry.baseDir}")
+    private String baseDir;
+    
+    @Value("${sorry.tempRelativePath}")
+    private String tempRelativePath;
+    
+    @Value("${sorry.cacheRelativePath}")
+    private String cacheRelativePath;
 
     public String renderGif(Subtitles subtitles) throws Exception {
-        File dir = new File(tempPath);
+        File dir = new File(baseDir);
         
-        String assRelativePath = UUID.randomUUID().toString().replace("-", "") + ".ass";
+        String assRelativePath = cacheRelativePath+"/"+UUID.randomUUID().toString().replace("-", "") + ".ass";
         
         renderAss(subtitles,assRelativePath);
         
-        String gifRelativePath = UUID.randomUUID() + ".gif";
+        String gifRelativePath = cacheRelativePath+"/"+UUID.randomUUID() + ".gif";
         
-        String videoRelativePath = subtitles.getTemplateName()+File.separator+"template.mp4";
+        String videoRelativePath = tempRelativePath+"/"+subtitles.getTemplateName()+File.separator+"template.mp4";
         
         String cmd = String.format("ffmpeg -i %s -r 6 -vf ass=%s,scale=300:-1 -y %s", videoRelativePath, assRelativePath, gifRelativePath);
         if ("simple".equals(subtitles.getMode())) {
@@ -69,7 +75,7 @@ public class GifService {
         } catch (Exception e) {
             logger.error("生成gif报错：{}", e);
         }
-        return tempPath+gifRelativePath;
+        return baseDir+"/"+gifRelativePath;
     }
 
     private void handleProcess(Process process) {
@@ -108,6 +114,7 @@ public class GifService {
                     {
                         result.append(line);
                     }
+                    System.out.println("ffmpeg执行的错误: "+result);
                     logger.info("ffmpeg执行的错误: "+result);
                 }
                 catch (IOException e)
@@ -131,7 +138,8 @@ public class GifService {
     }
 
     private String renderAss(Subtitles subtitles,String assRelativePath) throws Exception {
-        Path path = Paths.get(tempPath).resolve(assRelativePath);
+        String tempPath = baseDir + "/" +tempRelativePath;
+        Path path = Paths.get(baseDir).resolve(assRelativePath);
         Configuration cfg = new Configuration(Configuration.VERSION_2_3_27);
         cfg.setDefaultEncoding("UTF-8");
         cfg.setDirectoryForTemplateLoading(Paths.get(tempPath).resolve(subtitles.getTemplateName()).toFile());
