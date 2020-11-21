@@ -114,7 +114,6 @@ public class GifService {
                     {
                         result.append(line);
                     }
-                    System.out.println("ffmpeg执行的错误: "+result);
                     logger.info("ffmpeg执行的错误: "+result);
                 }
                 catch (IOException e)
